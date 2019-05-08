@@ -2,7 +2,7 @@
 
 https://github.com/llvm/llvm-project
 https://clang.llvm.org/get_started.html
-
+http://releases.llvm.org/8.0.0/tools/clang/tools/extra/docs/clangd/DeveloperDocumentation.html#compiling-clangd
 Getting Started: Building and Running Clang
 This page gives you the shortest path to checking out Clang and demos a few options. This should get you up and running with the minimum of muss and fuss. If you like what you see, please consider getting involved with the Clang community. If you run into problems, please file bugs in LLVM Bugzilla.
 
