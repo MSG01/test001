@@ -1,1 +1,111 @@
 https://blog.csdn.net/snsn1984/article/details/78621184
+clangd插件的源码位置:
+C:\Users\mwx683706\.nextcode\extensions\llvm-vs-code-extensions.vscode-clangd-0.0.12\out\src
+
+看源码 梳理流程 输出文档
+
+第一个vscode插件:
+https://code.visualstudio.com/api/get-started/your-first-extension
+
+
+cmake -DCMAKE_CXX_COMPILER=g++-7.2.0 -DCMAKE_C_COMPILER=gcc-7.2.0 ..
+cmake -DCMAKE_CXX_COMPILER=/usr/bin/g++ -DCMAKE_C_COMPILER=/usr/bin/gcc ..
+//指定g++ gcc 所在路径
+cmake -DCMAKE_CXX_COMPILER=$(which g++) -DCMAKE_C_COMPILER=$(which gcc) -DCMAKE_INSTALL_PREFIX:PATH=$(readlink -e $(pwd)/..) ..
+
+ make  CXX=/usr/bin/g++ C=/usr/bin/gcc
+
+
+llvm_canonicalize_cmake_booleans
+
+vscode编译:npm run compile
+底层编译:
+>cmake --build .
+
+tar -xf gmp-4.3.2.tar.bz2
+
+git clone https://github.com/llvm/llvm-project.git
+Build LLVM and Clang:
+cd llvm-project
+mkdir build (in-tree build is not supported)
+cd build
+cmake -DLLVM_ENABLE_PROJECTS=clang -G "Unix Makefiles" ../llvm
+make
+
+
+linux下:
+cmake -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;compiler-rt" -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles" -DCMAKE_CXX_COMPILER=$(which g++) -DCMAKE_C_COMPILER=$(which gcc) ../llvm
+
+
+cmake -DLLVM_ENABLE_PROJECTS=clang -DCMAKE_CXX_COMPILER=D:/mingw64/bin/g++ -DCMAKE_C_COMPILER=D:/mingw64/bin/gcc ../llvm
+
+
+cmake -DCMAKE_CXX_COMPILER=D:/mingw64/bin/g++ -DCMAKE_C_COMPILER=D:/mingw64/bin/gcc ../llvm-project-master/clang-tools-extra
+
+//clang工具的编译需要依赖llvm工程下的cmake宏-----------clang工具在llvm的clang下:目录形式:llvm-6.0.1.src/tools/cfe-6.0.1.src/tools/extra/clang-tidy----------
+
+1.从LLVM下载页面下载已发布的源
+LLVM源代码 - >链接到文件llvm-6.0.0.src.tar.xz
+Clang源代码 - >链接到文件cfe-6.0.0.src.tar.xz
+clang-tools-extra - >文件clang-tools-extra-6.0.0.src.tar.xz的链接
+2.将每个都分成正确的目录：
+$ tar -zxvf <download_dir_path>/llvm-6.0.1.src.tar.xz
+$ cd llvm-6.0.1.src/tools
+$ tar -zxcf <download_dir_path>/cfe-6.0.1.src.tar.xz
+$ cd llvm-6.0.1.src/tools/cfe-6.0.1.src/tools
+$ tar -zxvf <download_dir_path>/clang-tools-extra-6.0.1.src.tar.xz
+结果在目录中llvm-6.0.1.src/tools/cfe-6.0.1.src/tools/clang-tools-extra-6.0.1.src/clang-tidy; 这是不正确的。将lang-tools-extra-6.0.1.src需要被重命名为extra（由@jtbandes提到）。
+
+3.重新命名或提供符号链接：
+$ cd llvm-6.0.1.src/tools/cfe-6.0.1.src/tools
+$ mv clang-tools-extra-6.0.1.src extra
+or
+$ ln -s clang-tools-extra-6.0.1.src extra
+该路径llvm-6.0.1.src/tools/cfe-6.0.1.src/tools/extra/clang-tidy现在应该有效
+
+4.构建它：
+$ cd llvm-6.0.1.src
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make 
+一切都应该没有错误或警告。
+
+
+5.构建输出：
+构建输出可以在中找到llvm-6.0.1.src/build/bin。
+
+
+
+
+
+
+
+
+编译llvm时,需要内存较多,增加linux的虚拟内存方法:
+//"dd"命令来创建一个文件 16G大小
+dd if=/dev/zero of=/root/Desktop/extend_storage/swapfile bs=64M count=256
+//查看大小
+du  -h /root/Desktop/extend_storage/swapfile
+//格式化
+mkswap /root/Desktop/extend_storage/swapfile
+//启用/root/Desktop/extend_storage/swapfile内存
+swapon /root/Desktop/extend_storage/swapfile
+//查看
+free -m
+解除虚拟内存:
+swapoff /root/Desktop/extend_storage/swapfile
+rm /root/Desktop/extend_storage/swapfile
+
+//编译llvm:
+linux下:
+cmake -DLLVM_ENABLE_PROJECTS=clang -G "Unix Makefiles" -DCMAKE_CXX_COMPILER=$(which g++) -DCMAKE_C_COMPILER=$(which gcc) ../llvm
+make 
+
+
+//指定cmake配置目录:
+export LLVM_DIR=/root/Desktop/extend_storage/usr/clang/lib/cmake/llvm
+
+export LLVM_DIR=/root/Desktop/extend_storage/usr/clang/lib/cmake
+
+
