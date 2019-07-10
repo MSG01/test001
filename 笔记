@@ -120,4 +120,142 @@ export LLVM_DIR=/root/Desktop/extend_storage/usr/clang/lib/cmake
 //clang-tidy检查开发
 https://clang.llvm.org/extra/clang-tidy/Contributing.html
 
+//20190710
+软通账号：sgmao  密码：782814@oam
+linux机器  10.186.88.172  用户root  密码123qwe
+mwx683706 782814@mao
+which clang
+D:\soft\MinGW\MinGW\MinGW>gcc TEST.CPP -fdump-translation-unit 生成“程序文件名．tu"的抽象语法树文本
+
+在Windows下使用”gcc test.c”编译这个程序不会出现任何问题，
+但如果使用”clang test.c”编译，在控制台窗口就会报"fatal error: 'stdio.h' file not found"，
+原因就在于clang本身并没有配备完整的工具链，解决方法是首先将MinGW的bin目录到添加系统环境变量中，
+然后在使用clang编译时添加"--target=i686-pc-mingw32"选项，因为在Windows下我使用的是Mingw-w64所以相应的就应该添加"--target=i686-w64-mingw32"选项。
+--------------------- 
+clang编译test.cpp文件
+D:\Program Files\LLVM\bin>clang --target=i686-w64-mingw32 test.cpp
+
+
+生成语法树命令：
+clang.exe -Xclang -ast-dump --target=i686-w64-mingw32 test.cpp
+test.cpp生成语法树重定向到clang_dump.txt文件 并且shell窗口不显示
+clang.exe -c  -Xclang -ast-dump --target=i686-w64-mingw32 test.cpp > clang_dump.txt
+
+clang.exe -c  -Xclang -ast-dump test.cpp
+
+test.cpp生成语法树重定向到clang_dump.txt文件 并且shell窗口显示语法树
+clang.exe -###  -Xclang -ast-dump --target=i686-w64-mingw32 test.cpp > clang_dump.txt
+
+
+mount /dev/xvde1 work/ 挂载分区到work目录
+
+磁盘清理
+df -h ，这个命令用于查看服务器空间
+du -h --max-depth=1，这个命令用于查看当前目录，哪个文件占用最大，运行效果如下
+除此之外，du -sh *，这个命令也用于查看当前目录下各文件及文件夹占用大小
+python -m pydoc -p 0  命令启动本机的web服务查看已经安装好的python模块
+
+exec “import re“           #动态载入re模块
+
+
+
+//
+linux下pip的环境镜像配置：根目录下 新建.pip文件夹 新建文件pip.conf输入如下内容
+szvp000305713:~/.pip # ls
+pip.conf
+[global]
+index-url=http://rnd-mirrors.huawei.com/pypi/simple
+trusted-host=rnd-mirrors.huawei.com
+//
+
+
+szvp000305713:~/Desktop/primaryWork/codeSCT/SCT # df -h
+Filesystem      Size  Used Avail Use% Mounted on
+devtmpfs        3.8G     0  3.8G   0% /dev
+tmpfs           3.9G     0  3.9G   0% /dev/shm
+tmpfs           3.9G  9.9M  3.8G   1% /run
+tmpfs           3.9G     0  3.9G   0% /sys/fs/cgroup
+/dev/xvda2       36G   25G  9.8G  72% /
+tmpfs           779M     0  779M   0% /run/user/0
+/dev/xvde1      296G   63M  281G   1% /root/Desktop/work
+
+挂载：
+fdisk -l
+mount /dev/xvde1 extend_storage/
+
+lsblk
+df -l
+du -h --max-depth=1
+
+
+目录及目录文件夹文件修改权限
+	 chmod 777 * -R
+	 
+	 ln -s /usr/bin/g++-4.8 g++ 建立abc 的软连接
+	 
+	 
+clangd插件的源码位置:
+C:\Users\mwx683706\.nextcode\extensions\llvm-vs-code-extensions.vscode-clangd-0.0.12\out\src
+
+vscode编译:npm run compile
+
+
+内存不足解决方案:编译llvm时,需要内存较多,增加linux的虚拟内存方法:
+//"dd"命令来创建一个文件 16G大小
+dd if=/dev/zero of=/root/Desktop/extend_storage/swapfile bs=64M count=256
+//查看大小
+du  -h /root/Desktop/extend_storage/swapfile
+//格式化
+mkswap /root/Desktop/extend_storage/swapfile
+//启用/root/Desktop/extend_storage/swapfile内存
+swapon /root/Desktop/extend_storage/swapfile
+//查看
+free -m
+解除虚拟内存:
+swapoff /root/Desktop/extend_storage/swapfile
+rm /root/Desktop/extend_storage/swapfile
+
+//生成commandsjson文件命令
+cmake  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ../llvm
+
+//生成makefile构建文件
+cmake -G "MinGW Makefiles" -DASSIMP_BUILD_ASSIMP_TOOLS=NO -DLLVM_BUILD_RUNTIME=No -DLLVM_ENABLE_ASSERTIONS=On -DCMAKE_BUILD_TYPE=Release ../llvm
+//make
+
+
+
+生成单个文件的编译数据信息
+clang++ -MJ a.o.json -Wall -std=c++11 -o a.o -c cpptest.cpp
+clang++ -MJ b.o.json -Wall -std=c++11 -o mian.exe a.o test.cpp
+
+//python项目目录下,打包命令
+pyinstaller -F xxx.py  python打包
+pycharm 支持gevent 调试需要设置   设置方式settings->Build,execution,deployment->python debugger ->勾选Gevent compatilible
+
+
+scons
+
+D:\work\testCodeCpp\scons>scons HelloWorld.cpp -Q -n . cfg=sconsfile -j8 --tree=all
+
+scons: warning: you do not seem to have the pywin32 extensions installed;
+        parallel (-j) builds may not work reliably with open Python files.
+File "D:\Python\Python36\Scripts\scons.py", line 204, in <module>
+scons: Nothing to be done for `HelloWorld.cpp'.
++-HelloWorld.cpp
+scons: `.' is up to date.
++-.
+  +-HelloWorld.cpp
+  +-HelloWorld.exe
+  | +-HelloWorld.o
+  | | +-HelloWorld.cpp
+  | | +-D:\soft\MinGW\MinGW\MinGW\bin\g++.EXE
+  | +-D:\soft\MinGW\MinGW\MinGW\bin\g++.EXE
+  +-HelloWorld.o
+  | +-HelloWorld.cpp
+  | +-D:\soft\MinGW\MinGW\MinGW\bin\g++.EXE
+  +-SConstruct
+
+D:\work\testCodeCpp\scons>
+
+
 
